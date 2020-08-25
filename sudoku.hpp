@@ -9,7 +9,7 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
@@ -25,25 +25,34 @@
 #ifndef SUDOKU_HPP
 #define SUDOKU_HPP
 
-// Used only for debug purpuses.
-#include <iostream> 
+#include <iostream>
 #include <iomanip>
-
-// Useful libraries.
 #include <cstdlib>
 #include <vector>
 #include <string>
 #include <cmath>
+#include <fstream>
 
 
 class Sudoku{
 	public:
+	    // Solve a sudoku from file.
 		static std::vector<std::vector<int>> solve(std::string);
 		static int** solve9x9(std::string);
-		
+
+		// Check if a 2D matrix is a valid sudoku.
+		static bool isValid(std::vector<std::vector<int>>&);
+		static bool isValid9x9(int[9][9]);
+
+		// Algorithms for solving sudokus.
 		static bool backtracking(std::vector<std::vector<int>>&);
 		static bool backtracking9x9(int[9][9]);
+
+		// Print out a sudoku.
+		static void print(std::vector<std::vector<int>>&);
+		static void print9x9(int[9][9]);
 	private:
+	    // Legality of a sudoku after inserting a number.
 		static bool isLegal(std::vector<std::vector<int>>&, int, int, int);
 		static bool isLegal9x9(int[9][9], int, int, int);
 };
@@ -52,22 +61,75 @@ class Sudoku{
 /**
  * Solve a nxn sudoku, taking the puzzle from the file
  * and return a vector of vector of int.
+ * The file containing the sudoku must be in the form:
+ *      n
+ *      a b c ... d
+ *      . .       .
+ *      .    .    .
+ *      .       . .
+ *      e f g ... h
+ * There are n rows and n columns.
+ * The empty cells in the sudoku must be represented with zeros.
+ * The file must contain only numbers in range [0, n].
  *
  * The matrix returned is copied in the std::vector given:
  * 		std::vector<std::vector<int>> foo = Sudoku::solve(fileName);
  *
  * @param str Name of the file containing the sudoku to solve.
- * @returns 2D matrix containing the solved sudoku.
+ * @return 2D matrix containing the solved sudoku.
  */
 std::vector<std::vector<int>> Sudoku::solve(std::string str){
-	// TODO
-	std::vector<std::vector<int>> sudoku;
+	int s, k;
+	std::ifstream f(str);
+	if(f.is_open()){
+        f >> s;
+    }
+    else{
+        std::cout << "Error: file not found" << std::endl;
+        exit(1);
+    }
+    std::vector<int> tmp(s, 0);
+    std::vector<std::vector<int>> sudoku(s, tmp);
+    for(int i = 0; i < s; ++i){
+        for(int j = 0; j < s; ++j){
+            f >> k;
+            if(k <= s && k >= 0){
+                sudoku[i][j] = k;
+            }
+            else{
+                std::cout << "Error: number not in range" << std::endl;
+                exit(1);
+            }
+        }
+    }
+    if(!Sudoku::isValid(sudoku)){
+        std::cout << "Error: given sudoku is not legal" << std::endl;
+        exit(1);
+    }
+	if(!Sudoku::backtracking(sudoku)){
+        std::cout << "Error: given sudoku is not solvable" << std::endl;
+        exit(1);
+	}
 	return sudoku;
 }
 
 /**
  * Solve a 9x9 sudoku, taking the puzzle from the file
  * and return a int** (int[9][9]).
+ * The file containing the sudoku must be in the form:
+ *      9
+ *      a b c d e f g h i
+ *      f g h j z r s r n
+ *      q c g h m y u i l
+ *      q z a y u i l k h
+ *      a b c d e f g h i
+ *      f g h j z r s r n
+ *      q c g h m y u i l
+ *      q z a y u i l k h
+ *      t y n f d e r y j
+ * There are 9 rows and 9 columns.
+ * The empty cells in the sudoku must be represented with zeros.
+ * The file must contain only numbers in range [0, 9].
  *
  * The int** returned points to a dynamically allocated
  * piece of memory, to free it use:
@@ -78,7 +140,7 @@ std::vector<std::vector<int>> Sudoku::solve(std::string str){
  * 		delete [] foo;
  *
  * @param str Name of the file containg the sudoku to solve.
- * @returns 2D matrix containg the solved sudoku.
+ * @return 2D matrix containg the solved sudoku.
  */
 int** Sudoku::solve9x9(std::string str){
 	// TODO
@@ -93,13 +155,30 @@ int** Sudoku::solve9x9(std::string str){
 
 
 /**
+ * Check if a 2D matrix is a valid sudoku.
+ */
+bool Sudoku::isValid(std::vector<std::vector<int>>& sudoku){
+    // TODO
+    return true;
+}
+
+/**
+ * Check if a 9x9 matrix is a valid sudoku.
+ */
+bool Sudoku::isValid9x9(int sudoku[9][9]){
+    // TODO
+    return true;
+}
+
+
+/**
  * Solve a nxn sudoku using backtracking.
  * It modifies the parameter passed.
  *
  * @param sudoku 2D matrix containing the sudoku to solve.
- * @returns True if is solved, false if it fails to solve.
+ * @return True if is solved, false if it fails to solve.
  */
-bool Sudoku::backtracking(std::vector<std::vector<int>> &sudoku){	
+bool Sudoku::backtracking(std::vector<std::vector<int>> &sudoku){
 	int s = sudoku.size();
 	for(int i = 0; i < s; ++i){
 		for(int j = 0; j < s; ++j){
@@ -114,8 +193,8 @@ bool Sudoku::backtracking(std::vector<std::vector<int>> &sudoku){
 				}
 				sudoku[i][j] = 0;
 				return false;
-			}	
-		} 
+			}
+		}
 	}
 	return true;
 }
@@ -125,7 +204,7 @@ bool Sudoku::backtracking(std::vector<std::vector<int>> &sudoku){
  * It modifies the parameter passed.
  *
  * @param sudoku 2D matrix containing the sudoku to solve.
- * @returns True if is solved, false if it fails to solve.
+ * @return True if is solved, false if it fails to solve.
  */
 bool Sudoku::backtracking9x9(int sudoku[9][9]){
 	for(int i = 0; i < 9; ++i){
@@ -141,10 +220,55 @@ bool Sudoku::backtracking9x9(int sudoku[9][9]){
 				}
 				sudoku[i][j] = 0;
 				return false;
-			}	
-		} 
+			}
+		}
 	}
 	return true;
+}
+
+
+/**
+ * Print a nxn sudoku.
+ *
+ * @param sudoku The nxn sudoku to print.
+ */
+void Sudoku::print(std::vector<std::vector<int>>& sudoku){
+    int s = sudoku.size();
+    int n = std::sqrt(s);
+    for(int i = 0; i < s; ++i){
+        for(int j = 0; j < s; ++j){
+            std::cout << std::setw((int) std::log10(s) + 1) << sudoku[i][j] << " ";
+            if(j % n == n-1){
+                std::cout << " ";
+            }
+        }
+        std::cout << std::endl;
+        if(i % n == n-1){
+                std::cout << std::endl;
+        }
+    }
+    return;
+}
+
+/**
+ * Print a 9x9 sudoku.
+ *
+ * @param sudoku The 9x9 sudoku to print.
+ */
+void Sudoku::print9x9(int sudoku[9][9]){
+    for(int i = 0; i < 9; ++i){
+        for(int j = 0; j < 9; ++j){
+            std::cout << sudoku[i][j] << " ";
+            if(j % 3 == 2){
+                std::cout << " ";
+            }
+        }
+        std::cout << std::endl;
+        if(i % 3 == 2){
+                std::cout << std::endl;
+        }
+    }
+    return;
 }
 
 
@@ -152,11 +276,11 @@ bool Sudoku::backtracking9x9(int sudoku[9][9]){
  * Checks if a legal nxn sudoku remains legal after inserting
  * the value n at row r and column c.
  *
- * @param sudoku the sudoku to check.
- * @param r row's number.
- * @param c column's number.
- * @param n number to insert.
- * @returns True if is legal, false if is illegal.
+ * @param sudoku The sudoku to check.
+ * @param r Row's number.
+ * @param c Column's number.
+ * @param n Number to insert.
+ * @return True if is legal, false if is illegal.
  */
 bool Sudoku::isLegal(std::vector<std::vector<int>> &sudoku, int r, int c, int n){
 	int s = sudoku.size();
@@ -187,11 +311,11 @@ bool Sudoku::isLegal(std::vector<std::vector<int>> &sudoku, int r, int c, int n)
  * Checks if a legal 9x9 sudoku remains legal after inserting
  * the value n at row r and column c.
  *
- * @param sudoku the sudoku to check.
- * @param r row's number.
- * @param c column's number.
- * @param n number to insert.
- * @returns True if is legal, false if is illegal.
+ * @param sudoku The sudoku to check.
+ * @param r Row's number.
+ * @param c Column's number.
+ * @param n Number to insert.
+ * @return True if is legal, false if is illegal.
  */
 bool Sudoku::isLegal9x9(int sudoku[9][9], int r, int c, int n){
 	for(int j = 0; j < 9; ++j){
