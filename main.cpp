@@ -9,7 +9,7 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
@@ -56,18 +56,12 @@ int main(int argc, char* argv[]){
 		{ 0,  0,  7, 16,  0,  0,  6, 17,  2, 21,  0, 18,  0,  0,  0, 19,  0,  0,  8,  0,  0,  0,  0,  4,  0},
 		{18,  9, 25,  1,  2, 11,  0,  0, 13, 22,  4,  0, 21,  0,  5,  0, 23,  7,  0,  0, 15,  0,  3,  0,  8},
 		{ 0, 21, 10,  0,  0, 12,  0, 20, 16,  0, 19,  0,  0,  0,  0, 15, 14,  4,  2, 18, 23, 25, 11,  7,  0}
-	};	
+	};
 
-	Sudoku::backtracking(sud);
+    Sudoku::backtracking(sud);
+    Sudoku::print(sud);*/
 
-	for(vector<int> r : sud){
-		for(int n : r){
-			cout << setw(2) << n << " ";
-		}
-		cout << endl;
-	}*/
-	
-	int sud[9][9] = {
+	/*int sud[9][9] = {
 		{2,0,9,0,0,0,6,0,0},
 		{0,4,0,8,7,0,0,1,2},
 		{8,0,0,0,1,9,0,4,0},
@@ -77,16 +71,14 @@ int main(int argc, char* argv[]){
 		{0,0,0,6,5,0,7,0,9},
 		{6,0,4,0,0,0,0,2,0},
 		{0,8,0,3,0,1,4,5,0}
-	};	
+	};
 
 	Sudoku::backtracking9x9(sud);
-	
-	for(int i = 0; i < 9; ++i){
-		for(int j = 0; j < 9; ++j){
-			cout << sud[i][j] << " ";
-		}
-		cout << endl;
-	}
+    Sudoku::print9x9(sud);*/
+
+	std::string s = "sudoku.txt";
+    std::vector<std::vector<int>> sud = Sudoku::solve(s);
+    Sudoku::print(sud);
 
 	return 0;
 }
@@ -102,7 +94,7 @@ int main(int argc, char* argv[]){
 		{0,0,0,6,5,0,7,0,9},
 		{6,0,4,0,0,0,0,2,0},
 		{0,8,0,3,0,1,4,5,0}
-		
+
 		{5,3,0,0,7,0,0,0,0},
 		{6,0,0,1,9,5,0,0,0},
 		{0,9,8,0,0,0,0,6,0},
